@@ -11,7 +11,7 @@ class GoogleProviderConfig(BaseProviderConfig):
 
     @field_validator("model_name")
     @classmethod
-    def check_model_name(cls, v: Any):
+    def check_model_name(cls, v: Any) -> Any:
         if v not in ['gemini-2.0-flash', 'gemini-2.5-flash']:
             raise ValueError("Invalid model name")
         return v
