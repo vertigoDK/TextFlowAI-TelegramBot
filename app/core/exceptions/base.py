@@ -1,0 +1,2 @@
+class TextFlowException(Exception):
+    pass

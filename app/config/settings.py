@@ -1,11 +1,13 @@
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
 
+
 class Config(BaseSettings):
     DATABASE_URL: SecretStr
-    
-    class Config:  
+
+    class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
 
-settings = Config() # type: ignore
+
+settings = Config()  # type: ignore
