@@ -29,4 +29,33 @@ class BaseRepository(ABC, Generic[ModelType]):
 
         await self.session.commit()
 
+        await self.session.refresh(model)
+
         return model
+
+    async def update(self, id: int, **kwargs: Any) -> Optional[ModelType]:
+        
+        instance: Optional[ModelType] = await self.get_by_id(id)
+
+        if instance is None:
+            return None
+
+        for key, value in kwargs.items():
+            setattr(instance, key, value)
+        
+        await self.session.commit()
+        await self.session.refresh(instance)
+
+        return instance
+
+    async def delete(self, id: int) -> bool:
+        
+        instance: Optional[ModelType] = await self.get_by_id(id)
+
+        if instance is None:
+            return False
+
+        await self.session.delete(instance)
+        await self.session.commit()
+
+        return True
