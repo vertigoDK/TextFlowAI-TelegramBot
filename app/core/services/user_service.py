@@ -16,7 +16,7 @@ class UserService:
         first_name: str,
         username: Optional[str] = None
     ) -> User:
-
+    
         self._validate_telegram_id(telegram_id)
 
         try:
@@ -32,8 +32,6 @@ class UserService:
         except Exception as e:
             raise
 
-    
-
     def _validate_telegram_id(self, telegram_id: int) -> None:
         """Валидация Telegram ID (должен быть положительным числом)"""
         
@@ -43,5 +41,3 @@ class UserService:
         # Telegram ID обычно от 9 до 10 цифр
         if not (100000000 <= telegram_id <= 9999999999):
             raise InvalidTelegramID()
-
-        
