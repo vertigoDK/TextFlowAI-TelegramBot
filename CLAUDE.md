@@ -31,6 +31,14 @@ black .
 
 # Run tests
 pytest
+
+# Run tests with coverage
+pytest --cov=app --cov-report=html --cov-report=term
+
+# Run specific test modules
+pytest tests/core/models/ -v
+pytest tests/infrastructure/database/repositories/ -v
+pytest tests/core/services/ -v
 ```
 
 ## Architecture Overview
@@ -76,6 +84,22 @@ This is a Telegram bot built with clean architecture principles using the Reposi
 - `app/bot/handlers/messages.py`: Main message handling logic
 - `app/infrastructure/database/connection.py`: Async SQLAlchemy setup
 - `app/config/settings.py`: Environment configuration via Pydantic
+
+### Testing
+
+The project has comprehensive test coverage with pytest:
+
+**Test Structure:**
+- `tests/core/models/` - Model validation and enum tests (24 tests)
+- `tests/infrastructure/database/repositories/` - Repository CRUD and business logic (36 tests)
+- `tests/core/services/` - Service layer and business rules
+- `tests/conftest.py` - Test fixtures with in-memory SQLite database
+
+**Key Testing Patterns:**
+- Uses `pytest-asyncio` for async test support
+- In-memory SQLite database for fast, isolated tests
+- Comprehensive fixtures for test data setup
+- Tests cover both happy path and edge cases
 
 ### Environment Variables Required
 
