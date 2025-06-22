@@ -1,5 +1,5 @@
 from ast import Dict
-from typing import Any
+from typing import Any, List
 from app.infrastructure.database.repositories.user_repository import UserRepository
 from app.infrastructure.database.repositories.message_repository import (
     MessageRepository,
@@ -11,6 +11,7 @@ from app.core.exceptions.user import UserNotFound
 from app.core.exceptions.message import InvalidMessageData
 from app.core.exceptions.base import TextFlowException
 from sqlalchemy.exc import SQLAlchemyError
+from app.utils.validators import validate_telegram_id
 
 class MessageService:
 
@@ -29,7 +30,7 @@ class MessageService:
         ai_metadata: Optional[Dict[str, Any]] = None,
     ) -> Message:
 
-        self._validate_message_input(telegram_id=telegram_id, content=content, role=role)
+        self._validate_message_input(telegram_id=telegram_id, content=content)
 
         try:
             user = await self.user_repository.get_by_telegram_id(telegram_id=telegram_id)
@@ -52,16 +53,17 @@ class MessageService:
         except Exception as e:
             raise
 
+    async def get_conversation_context(
+        self,
+        telegram_id: int,
+        context_limit: int = 10
+    ) -> List[Message]:
+        validate_telegram_id(telegram_id=telegram_id)
+        return [Message()]
 
-    def _validate_message_input(self, telegram_id: int, content: str, role: MessageRole) -> None:
-        if not isinstance(telegram_id, int) or telegram_id <= 0:
-            raise InvalidMessageData("Invalid telegram_id")
-        
-        if not isinstance(content, str):
-            raise InvalidMessageData("Message content must be string")
-        
-        if not isinstance(role, MessageRole):
-            raise InvalidMessageData("Invalid message role")
+
+    def _validate_message_input(self, telegram_id: int, content: str) -> None:
+        validate_telegram_id(telegram_id=telegram_id)
         
         content = content.strip()
         if not content:

@@ -2,9 +2,9 @@ from typing import Optional
 from app.core.exceptions.base import TextFlowException
 from app.core.models.user import User
 from app.infrastructure.database.repositories.user_repository import UserRepository
-from app.core.exceptions.user import InvalidTelegramID, UserLimitExceeded, UserNotFound
+from app.core.exceptions.user import UserLimitExceeded, UserNotFound
 from sqlalchemy.exc import SQLAlchemyError
-
+from app.utils.validators import validate_telegram_id
 
 class UserService:
 
@@ -15,7 +15,7 @@ class UserService:
         self, telegram_id: int, first_name: str, username: Optional[str] = None
     ) -> User:
 
-        self._validate_telegram_id(telegram_id)
+        validate_telegram_id(telegram_id=telegram_id)
 
         try:
             user = await self.user_repository.get_or_create_user(
@@ -49,7 +49,7 @@ class UserService:
         self, telegram_id: int, first_name: str, username: Optional[str] = None
     ) -> User:
 
-        self._validate_telegram_id(telegram_id=telegram_id)
+        validate_telegram_id(telegram_id=telegram_id)
 
         try:
 
@@ -75,7 +75,7 @@ class UserService:
 
     async def get_user_stats(self, telegram_id: int) -> dict:
 
-        self._validate_telegram_id(telegram_id=telegram_id)
+        validate_telegram_id(telegram_id=telegram_id)
 
         try:
             user = await self.user_repository.get_by_telegram_id(
@@ -104,13 +104,3 @@ class UserService:
             raise TextFlowException(f"Failed to reset daily limits: {e}")
         except Exception as e:
             raise
-
-    def _validate_telegram_id(self, telegram_id: int) -> None:
-        """Валидация Telegram ID (должен быть положительным числом)"""
-
-        if not isinstance(telegram_id, int) or telegram_id <= 0:
-            raise InvalidTelegramID()
-
-        # Telegram ID обычно от 9 до 10 цифр
-        if not (100000000 <= telegram_id <= 9999999999):
-            raise InvalidTelegramID()
