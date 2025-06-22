@@ -14,11 +14,11 @@ async def main() -> None:
     bot = Bot(token=settings.TELEGRAM_BOT_TOKEN.get_secret_value())
     dp = Dispatcher()
 
-    dp.message.middleware(UserMiddleware(container.user_service))
+    # Передаем контейнер в middleware
+    dp.message.middleware(UserMiddleware(container))
 
-    dp["message_service"] = container.message_service
-    dp["conversation_ai"] = container.conversation_ai
-    dp["user_service"] = container.user_service
+    # Передаем контейнер в handlers
+    dp["container"] = container
 
     from app.bot.handlers.commands import router as commands_router
     from app.bot.handlers.messages import router as messages_router

@@ -4,9 +4,7 @@ from aiogram import types
 
 from app.core.models.message import Message, MessageRole
 from app.core.models.user import User
-from app.core.services.ai.generator import AIGenerator
-from app.core.services.user_service import UserService
-from app.core.services.message_service import MessageService
+from app.core.services.container import Container
 
 router = Router()
 
@@ -15,13 +13,15 @@ router = Router()
 async def handle_text_message(
     message: types.Message,
     user: User,
-    user_service: UserService,
-    message_service: MessageService,
-    conversation_ai: AIGenerator,
+    container: Container,
     ) -> None:
 
         if message.text is None:
             return
+
+        user_service = await container.get_user_service()
+        message_service = await container.get_message_service()
+        conversation_ai = container.conversation_ai
 
         if not await user_service.can_make_request(user.telegram_id):
             await message.answer("You have reached your daily limit.")
@@ -37,7 +37,19 @@ async def handle_text_message(
             telegram_id=user.telegram_id,
         )
 
+        await user_service.process_user_request(
+            telegram_id=user.telegram_id,
+            first_name=user.first_name,
+            username=user.username,
+        )
+
         response: Dict[str, Any] = await conversation_ai.agenerate(recent_messages)
 
+        await message_service.create_message(
+            telegram_id=user.telegram_id,
+            role=MessageRole.ASSISTANT,
+            content=response['content'],
+            ai_metadata=response,
+        )
 
         await message.answer(f"{response['content']}")

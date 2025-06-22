@@ -24,30 +24,16 @@ class Container:
             provider=self._provider, prompt_builder=ConversationPromptBuilder()
         )
 
-        # Создаем сессию для репозиториев
-        self._session = SessionLocal()
-        self._user_repository = UserRepository(self._session)
-        self._message_repository = MessageRepository(self._session)
-        self._user_service = UserService(self._user_repository)
-        self._message_service = MessageService(
-            self._user_repository, self._message_repository
-        )
+    async def get_user_service(self):
+        session = SessionLocal()
+        user_repository = UserRepository(session)
+        return UserService(user_repository)
 
-    @property
-    def user_repository(self):
-        return self._user_repository
-
-    @property
-    def message_repository(self):
-        return self._message_repository
-
-    @property
-    def user_service(self):
-        return self._user_service
-
-    @property
-    def message_service(self):
-        return self._message_service
+    async def get_message_service(self):
+        session = SessionLocal()
+        user_repository = UserRepository(session)
+        message_repository = MessageRepository(session)
+        return MessageService(user_repository, message_repository)
 
     @property
     def conversation_ai(self) -> AIGenerator:
