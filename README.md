@@ -171,12 +171,12 @@ class MessageRepository(BaseRepository[Message]):
 ### 🔄 In Progress
 - [x] **Service Layer** - Business logic implementation
 - [ ] **Telegram Bot** - aiogram handlers and middleware
-- [ ] **AI Integration** - Google Gemini API wrapper
+- [x] **AI Integration** - Google Gemini API wrapper
 - [ ] **Configuration** - Environment-based settings
 
 ### 📅 Planned
 - [ ] **Authentication** - User session management
-- [ ] **Rate Limiting** - Advanced usage controls
+- [x] **Rate Limiting** - Advanced usage controls
 - [ ] **Monitoring** - Logging and metrics
 - [ ] **Testing** - Comprehensive test suite
 - [ ] **Deployment** - Docker containerization
