@@ -22,9 +22,11 @@ async def main() -> None:
 
     from app.bot.handlers.commands import router as commands_router
     from app.bot.handlers.messages import router as messages_router
+    from app.bot.handlers.cabinet import router as cabinet_router
 
     dp.include_router(commands_router)
     dp.include_router(messages_router)
+    dp.include_router(cabinet_router)
 
     await dp.start_polling(bot)
 

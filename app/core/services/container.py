@@ -13,6 +13,7 @@ from app.infrastructure.database.repositories.message_repository import (
 )
 from app.core.services.user_service import UserService
 from app.core.services.message_service import MessageService
+from app.core.services.cabinet_service import CabinetService
 
 
 class Container:
@@ -34,6 +35,10 @@ class Container:
         user_repository = UserRepository(session)
         message_repository = MessageRepository(session)
         return MessageService(user_repository, message_repository)
+
+    def get_cabinet_service(self):
+        session = SessionLocal()
+        return CabinetService(session)
 
     @property
     def conversation_ai(self) -> AIGenerator:

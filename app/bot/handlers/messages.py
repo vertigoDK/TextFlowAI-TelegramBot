@@ -1,5 +1,5 @@
 from typing import Any, Dict, List
-from aiogram import Router
+from aiogram import Router, F
 from aiogram import types
 
 from app.core.models.message import Message, MessageRole
@@ -9,7 +9,7 @@ from app.core.services.container import Container
 router = Router()
 
 
-@router.message()
+@router.message(F.text & ~F.text.startswith("/"))
 async def handle_text_message(
     message: types.Message,
     user: User,
