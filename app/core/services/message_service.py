@@ -2,12 +2,11 @@ from typing import Any, List, Optional, Dict
 from app.infrastructure.database.repositories.user_repository import UserRepository
 from app.infrastructure.database.repositories.message_repository import (
     MessageRepository,
-    MessageStatus,
     MessageRole,
     Message,
 )
 from app.core.exceptions.user import UserNotFound
-from app.core.exceptions.message import InvalidMessageData, MessageNotFound
+from app.core.exceptions.message import InvalidMessageData
 from app.core.exceptions.base import TextFlowException
 from sqlalchemy.exc import SQLAlchemyError
 from app.utils.validators import validate_telegram_id
@@ -26,7 +25,6 @@ class MessageService:
         telegram_id: int,
         role: MessageRole,
         content: str,
-        status: MessageStatus = MessageStatus.PENDING,
         ai_metadata: Optional[Dict[str, Any]] = None,
     ) -> Message:
 
@@ -44,7 +42,6 @@ class MessageService:
                 user_id=user.id,
                 role=role,
                 content=content,
-                status=status,
                 ai_metadata=ai_metadata,
             )
 
@@ -75,33 +72,6 @@ class MessageService:
 
         except SQLAlchemyError as e:
             raise TextFlowException(f"Failed to get conversation context: {e}")
-        except Exception as e:
-            raise
-
-    async def update_message_status(
-        self,
-        message_id: int,
-        status: MessageStatus,
-        ai_metadata: Optional[Dict[str, Any]] = None,
-    ) -> Message:
-
-        if not isinstance(message_id, int) or message_id <= 0:
-            raise InvalidMessageData("Invalid message_id")
-
-        try:
-            updated_message = await self.message_repository.update_message_status(
-                message_id=message_id,
-                status=status,
-                ai_metadata=ai_metadata,
-            )
-
-            if not updated_message:
-                raise MessageNotFound(f"Message with id {message_id} not found")
-
-            return updated_message
-
-        except SQLAlchemyError as e:
-            raise TextFlowException(f"Failed to update message status: {e}")
         except Exception as e:
             raise
 

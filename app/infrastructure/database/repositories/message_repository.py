@@ -3,7 +3,7 @@ from sqlalchemy import select, desc, delete
 from typing import Optional, List
 from datetime import datetime, timedelta, timezone
 
-from app.core.models.message import Message, MessageRole, MessageStatus
+from app.core.models.message import Message, MessageRole
 from .base import BaseRepository
 
 
@@ -17,7 +17,6 @@ class MessageRepository(BaseRepository[Message]):
         user_id: int,
         role: MessageRole,
         content: str,
-        status: MessageStatus = MessageStatus.PENDING,
         ai_metadata: Optional[dict] = None,
     ) -> Message:
         """Создать новое сообщение"""
@@ -25,7 +24,6 @@ class MessageRepository(BaseRepository[Message]):
             user_id=user_id,
             role=role,
             content=content,
-            status=status,
             ai_metadata=ai_metadata,
         )
 
@@ -75,20 +73,11 @@ class MessageRepository(BaseRepository[Message]):
         result = await self.session.execute(stmt)
         return list(result.scalars().all())
 
-    async def update_message_status(
-        self, message_id: int, status: MessageStatus, ai_metadata: Optional[dict] = None
-    ) -> Optional[Message]:
-        """Обновить статус сообщения и метаданные"""
-        if ai_metadata is not None:
-            return await self.update(message_id, status=status, ai_metadata=ai_metadata)
-        else:
-            return await self.update(message_id, status=status)
-
     async def get_pending_messages(self, user_id: int) -> List[Message]:
         """Получить сообщения в статусе PENDING для конкретного пользователя"""
         stmt = (
             select(Message)
-            .where(Message.user_id == user_id, Message.status == MessageStatus.PENDING)
+            .where(Message.user_id == user_id)
             .order_by(Message.created_at)
         )
 
@@ -102,7 +91,6 @@ class MessageRepository(BaseRepository[Message]):
         time_threshold = datetime.now(timezone.utc) - timedelta(hours=hours_back)
 
         conditions = [
-            Message.status == MessageStatus.FAILED,
             Message.created_at >= time_threshold,
         ]
 
