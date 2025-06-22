@@ -169,7 +169,7 @@ class MessageRepository(BaseRepository[Message]):
 - [x] **Core Models** - User and Message models with proper relationships
 
 ### 🔄 In Progress
-- [ ] **Service Layer** - Business logic implementation
+- [x] **Service Layer** - Business logic implementation
 - [ ] **Telegram Bot** - aiogram handlers and middleware
 - [ ] **AI Integration** - Google Gemini API wrapper
 - [ ] **Configuration** - Environment-based settings
