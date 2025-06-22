@@ -6,6 +6,7 @@ from app.core.exceptions.user import UserLimitExceeded, UserNotFound
 from sqlalchemy.exc import SQLAlchemyError
 from app.utils.validators import validate_telegram_id
 
+
 class UserService:
 
     def __init__(self, user_repository: UserRepository) -> None:

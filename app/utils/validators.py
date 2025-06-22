@@ -1,5 +1,6 @@
 from app.core.exceptions.user import InvalidTelegramID
 
+
 def validate_telegram_id(telegram_id: int) -> None:
     """Валидация Telegram ID (должен быть положительным числом)"""
 
