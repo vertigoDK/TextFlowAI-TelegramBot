@@ -2,9 +2,9 @@ from .base import TextFlowException
 
 
 class UserNotFound(TextFlowException):
-    def __init__(self, user_id: int) -> None:
-        self.user_id = user_id
-        super().__init__(f"User with id {user_id} not found")
+    def __init__(self, telegram_id: int) -> None:
+        self.telegram_id = telegram_id
+        super().__init__(f"User with id {telegram_id} not found")
 
 
 class UserLimitExceeded(TextFlowException):
